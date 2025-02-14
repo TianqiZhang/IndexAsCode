@@ -1,0 +1,15 @@
+{
+  "name": "hotels",
+  "fields": [
+    { "name": "HotelId", "type": "Edm.String", "key": true },
+    { "name": "HotelName", "type": "Edm.String" },
+    { "name": "Description", "type": "Edm.String" },
+    { "name": "Address", "type": "Edm.ComplexType", 
+      "fields": [
+        { "name": "StreetAddress", "type": "Edm.String" },
+        { "name": "City", "type": "Edm.String" },
+        { "name": "StateProvince", "type": "Edm.String" }
+      ]
+    }
+  ]
+}
