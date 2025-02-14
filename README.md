@@ -81,10 +81,48 @@ Console.WriteLine($"{HotelsFields.Address}/{HotelsFields.AddressCity}: {hotel.Ad
 
 ## Project Structure
 
-- `IndexAsCode.Generator/`: The source generator project
-- `IndexAsCode.Sample/`: A sample project demonstrating usage
+- `IndexAsCode.Generator/`: The source generator project targeting .NET Standard 2.0
+- `IndexAsCode.Sample/`: A sample project demonstrating usage (targeting .NET 9.0)
   - `hotels.index.json`: Example index definition
   - `Program.cs`: Usage example
+
+## Configuration
+
+The project requires the following configuration in your `.csproj` file:
+
+```xml
+<PropertyGroup>
+  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+</PropertyGroup>
+
+<ItemGroup>
+  <AdditionalFiles Include="**/*.index.json" />
+</ItemGroup>
+```
+
+This configuration ensures:
+- Source generator output files are emitted for debugging
+- Index definition JSON files are properly included as additional files
+
+## Namespace Customization
+
+You can customize the namespace of the generated code by adding an assembly-level attribute:
+
+```csharp
+[assembly: IndexAsCode.Generator.IndexNamespace("MyCompany.Search")]
+```
+
+This will generate the model classes and field constants in the specified namespace instead of using the index name as the namespace.
+
+## Technical Implementation
+
+The source generator is implemented using:
+- .NET Standard 2.0 for maximum compatibility
+- Microsoft.CodeAnalysis.CSharp 4.8.0 for source generation
+- System.Text.Json 8.0.0 for JSON parsing
+- Case-insensitive JSON property name matching
+- Roslyn Incremental Generator API for optimal performance
 
 ## Created by GitHub Copilot
 
