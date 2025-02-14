@@ -8,14 +8,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IndexAsCodeNamespace>MyCompany.Search</IndexAsCodeNamespace>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <CompilerVisibleProperty Include="IndexAsCodeNamespace" />
-  </ItemGroup>
-
-  <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
@@ -23,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IndexAsCode.Generator\IndexAsCode.Generator.csproj"
                       OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+                      ReferenceOutputAssembly="true" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,20 +12,24 @@ public class IndexGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        #if DEBUG
-            //if (!Debugger.IsAttached)
-            //{
-            //    Debugger.Launch();
-            //}
-        #endif
-
-        // Get the MSBuild property directly from analyzer config
-        IncrementalValueProvider<string?> namespaceOption = context.AnalyzerConfigOptionsProvider
-            .Select((config, _) =>
+        // Get the namespace from assembly attributes
+        var namespaceOption = context.CompilationProvider
+            .Select((compilation, _) =>
             {
-                // Try get the value with the exact property name
-                config.GlobalOptions.TryGetValue("build_property.IndexAsCodeNamespace", out var customNamespace);
-                return customNamespace;
+                // Look for our namespace attribute
+                var attributes = compilation.Assembly.GetAttributes();
+                var namespaceAttr = attributes.FirstOrDefault(a => 
+                    a.AttributeClass?.ToDisplayString() == typeof(IndexNamespaceAttribute).FullName);
+
+                // If attribute found, get its value
+                if (namespaceAttr != null && 
+                    namespaceAttr.ConstructorArguments.Length > 0 && 
+                    namespaceAttr.ConstructorArguments[0].Value is string ns)
+                {
+                    return ns;
+                }
+
+                return null;
             });
 
         // Get the json files
@@ -39,29 +43,11 @@ public class IndexGenerator : IIncrementalGenerator
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         });
 
-        // Combine the namespace option with index definitions and add diagnostics
+        // Combine the namespace option with index definitions
         var combined = indexDefinitions.Combine(namespaceOption);
         
         context.RegisterSourceOutput(combined, 
-            (context, tuple) => 
-            {
-                // Add diagnostic info about what namespace we're using
-                var message = tuple.Right != null 
-                    ? $"Using namespace: {tuple.Right}" 
-                    : "No custom namespace found, using default";
-                    
-                context.ReportDiagnostic(Diagnostic.Create(
-                    new DiagnosticDescriptor(
-                        "IAC002",
-                        "Namespace Info",
-                        message,
-                        "IndexAsCode",
-                        DiagnosticSeverity.Info,
-                        true),
-                    Location.None));
-                
-                GenerateCode(context, tuple.Left, tuple.Right);
-            });
+            (context, tuple) => GenerateCode(context, tuple.Left, tuple.Right));
     }
 
     private void GenerateCode(SourceProductionContext context, IndexDefinition? indexDef, string? customNamespace)
