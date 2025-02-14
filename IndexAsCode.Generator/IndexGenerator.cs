@@ -132,7 +132,17 @@ public class IndexGenerator : IIncrementalGenerator
         }
     }
 
-    private string GetCSharpType(FieldDefinition field) => field.Type switch
+    private string GetCSharpType(FieldDefinition field)
+    {
+        if (field.Type.StartsWith("Collection("))
+        {
+            var innerType = field.Type.Substring(11, field.Type.Length - 12); // Remove Collection( and )
+            return $"List<{GetCSharpTypeInternal(innerType, field.Name)}>";
+        }
+        return GetCSharpTypeInternal(field.Type, field.Name);
+    }
+
+    private string GetCSharpTypeInternal(string type, string fieldName) => type switch
     {
         "Edm.String" => "string",
         "Edm.Int32" => "int",
@@ -141,7 +151,7 @@ public class IndexGenerator : IIncrementalGenerator
         "Edm.Boolean" => "bool",
         "Edm.DateTimeOffset" => "DateTimeOffset",
         "Edm.GeographyPoint" => "string", // Simplified for demo
-        "Edm.ComplexType" => field.Name,
+        "Edm.ComplexType" => fieldName,
         _ => "string"
     };
 }

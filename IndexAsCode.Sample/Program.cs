@@ -10,6 +10,7 @@ var hotel = new HotelsDocument
     HotelId = "123",
     HotelName = "Seaside Resort",
     Description = "A beautiful beachfront resort",
+    Tags = new List<string> { "beach", "luxury", "family-friendly", "spa" },
     Address = new Address
     {
         StreetAddress = "123 Ocean Drive",
@@ -22,3 +23,4 @@ var hotel = new HotelsDocument
 Console.WriteLine($"Accessing hotel using field constants:");
 Console.WriteLine($"{HotelsFields.HotelName}: {hotel.HotelName}");
 Console.WriteLine($"{HotelsFields.Address}/{HotelsFields.AddressStreetAddress}: {hotel.Address.StreetAddress}");
+Console.WriteLine($"{HotelsFields.Tags}: {string.Join(", ", hotel.Tags)}");
