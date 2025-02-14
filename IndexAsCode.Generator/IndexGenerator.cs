@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using Microsoft.CodeAnalysis;
@@ -11,39 +12,76 @@ public class IndexGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        #if DEBUG
+            //if (!Debugger.IsAttached)
+            //{
+            //    Debugger.Launch();
+            //}
+        #endif
+
+        // Get the MSBuild property directly from analyzer config
+        IncrementalValueProvider<string?> namespaceOption = context.AnalyzerConfigOptionsProvider
+            .Select((config, _) =>
+            {
+                // Try get the value with the exact property name
+                config.GlobalOptions.TryGetValue("build_property.IndexAsCodeNamespace", out var customNamespace);
+                return customNamespace;
+            });
+
+        // Get the json files
         var jsonFiles = context.AdditionalTextsProvider
             .Where(file => file.Path.EndsWith(".index.json", StringComparison.OrdinalIgnoreCase));
 
-        var indexDefinitions = jsonFiles.Select((file, cancellationToken) => 
+        var indexDefinitions = jsonFiles.Select((file, cancellationToken) =>
         {
             var content = file.GetText(cancellationToken)!.ToString();
-            var indexDef = JsonSerializer.Deserialize<IndexDefinition>(content, 
+            return JsonSerializer.Deserialize<IndexDefinition>(content,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return indexDef;
         });
 
-        context.RegisterSourceOutput(indexDefinitions, GenerateCode);
+        // Combine the namespace option with index definitions and add diagnostics
+        var combined = indexDefinitions.Combine(namespaceOption);
+        
+        context.RegisterSourceOutput(combined, 
+            (context, tuple) => 
+            {
+                // Add diagnostic info about what namespace we're using
+                var message = tuple.Right != null 
+                    ? $"Using namespace: {tuple.Right}" 
+                    : "No custom namespace found, using default";
+                    
+                context.ReportDiagnostic(Diagnostic.Create(
+                    new DiagnosticDescriptor(
+                        "IAC002",
+                        "Namespace Info",
+                        message,
+                        "IndexAsCode",
+                        DiagnosticSeverity.Info,
+                        true),
+                    Location.None));
+                
+                GenerateCode(context, tuple.Left, tuple.Right);
+            });
     }
 
-    private void GenerateCode(SourceProductionContext context, IndexDefinition? indexDef)
+    private void GenerateCode(SourceProductionContext context, IndexDefinition? indexDef, string? customNamespace)
     {
         if (indexDef == null) return;
 
-        var modelSource = GenerateModelClass(indexDef);
-        var fieldsSource = GenerateFieldConstants(indexDef);
+        var modelSource = GenerateModelClass(indexDef, customNamespace);
+        var fieldsSource = GenerateFieldConstants(indexDef, customNamespace);
 
         context.AddSource($"{indexDef.Name}Model.g.cs", SourceText.From(modelSource, Encoding.UTF8));
         context.AddSource($"{indexDef.Name}Fields.g.cs", SourceText.From(fieldsSource, Encoding.UTF8));
     }
 
-    private string GenerateModelClass(IndexDefinition index)
+    private string GenerateModelClass(IndexDefinition index, string? customNamespace)
     {
         var sb = new StringBuilder();
         sb.AppendLine("using System;");
         sb.AppendLine();
 
-        var namespaceName = char.ToUpperInvariant(index.Name[0]) + index.Name.Substring(1);
-        sb.AppendLine($"namespace {namespaceName}.Models");
+        sb.AppendLine($"namespace {customNamespace ?? index.Name}.Models");
         sb.AppendLine("{");
         
         // Generate all complex types first
@@ -97,13 +135,15 @@ public class IndexGenerator : IIncrementalGenerator
         sb.AppendLine("    }");
     }
 
-    private string GenerateFieldConstants(IndexDefinition index)
+    private string GenerateFieldConstants(IndexDefinition index, string? customNamespace)
     {
         var sb = new StringBuilder();
-        var namespaceName = char.ToUpperInvariant(index.Name[0]) + index.Name.Substring(1);
-        sb.AppendLine($"namespace {namespaceName}.Fields");
+        sb.AppendLine($"namespace {customNamespace ?? index.Name}.Fields");
         sb.AppendLine("{");
-        sb.AppendLine($"    public static class {namespaceName}Fields");
+        
+        // Use capitalized name for consistency with document class
+        var className = char.ToUpperInvariant(index.Name[0]) + index.Name.Substring(1) + "Fields";
+        sb.AppendLine($"    public static class {className}");
         sb.AppendLine("    {");
 
         foreach (var field in index.Fields)

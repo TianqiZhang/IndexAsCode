@@ -1,5 +1,5 @@
-﻿using Hotels.Models;
-using Hotels.Fields;
+﻿using MyCompany.Search.Models;
+using MyCompany.Search.Fields;
 
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
@@ -21,6 +21,6 @@ var hotel = new HotelsDocument
 
 // Demonstrate using the generated field constants
 Console.WriteLine($"Accessing hotel using field constants:");
-Console.WriteLine($"{HotelsFields.HotelName}: {hotel.HotelName}");
+Console.WriteLine($"{HotelsFields.HotelId}: {hotel.HotelId}");
 Console.WriteLine($"{HotelsFields.Address}/{HotelsFields.AddressStreetAddress}: {hotel.Address.StreetAddress}");
 Console.WriteLine($"{HotelsFields.Tags}: {string.Join(", ", hotel.Tags)}");
