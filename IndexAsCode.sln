@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexAsCode.Generator", "In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexAsCode.Sample", "IndexAsCode.Sample\IndexAsCode.Sample.csproj", "{9756834A-F906-478D-B6E7-7BF29573FF76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexAsCode.Tools", "IndexAsCode.Tools\IndexAsCode.Tools.csproj", "{369BDA6C-DAA1-4F26-8F75-4601EC822A31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexAsCode.Tools.Tests", "IndexAsCode.Tools.Tests\IndexAsCode.Tools.Tests.csproj", "{DD690FFF-BDBC-4D98-9785-A09A7CE2A68A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{9756834A-F906-478D-B6E7-7BF29573FF76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9756834A-F906-478D-B6E7-7BF29573FF76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9756834A-F906-478D-B6E7-7BF29573FF76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{369BDA6C-DAA1-4F26-8F75-4601EC822A31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{369BDA6C-DAA1-4F26-8F75-4601EC822A31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{369BDA6C-DAA1-4F26-8F75-4601EC822A31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{369BDA6C-DAA1-4F26-8F75-4601EC822A31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD690FFF-BDBC-4D98-9785-A09A7CE2A68A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD690FFF-BDBC-4D98-9785-A09A7CE2A68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD690FFF-BDBC-4D98-9785-A09A7CE2A68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD690FFF-BDBC-4D98-9785-A09A7CE2A68A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

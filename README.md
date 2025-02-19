@@ -115,6 +115,38 @@ You can customize the namespace of the generated code by adding an assembly-leve
 
 This will generate the model classes and field constants in the specified namespace instead of using the index name as the namespace.
 
+## Index Management Tool
+
+The solution includes an index management tool that helps maintain synchronization between your local index definitions and Azure Search. The tool provides two main commands:
+
+### Comparing Index Definitions (diff)
+```bash
+IndexAsCode.Tools diff --index-file path/to/hotels.index.json --endpoint https://your-search-service.search.windows.net --key your-admin-key
+```
+
+This command will show differences between your local index definition and the one in Azure Search:
+
+```
+Found differences between local and Azure Search index definitions:
+Changed fields/1/searchable:
+  From: true
+  To:   false
+Added fields/2/filterable: true
+Removed fields/3/synonymMaps: ["location-synonyms"]
+```
+
+### Updating Index Definitions (update)
+```bash
+IndexAsCode.Tools update --index-file path/to/hotels.index.json --endpoint https://your-search-service.search.windows.net --key your-admin-key
+```
+
+This command will create a new index or update an existing one in Azure Search based on your local definition.
+
+You can optionally specify a different index name with `--index-name`:
+```bash
+IndexAsCode.Tools update --index-file hotels.index.json --index-name hotels-staging --endpoint ... --key ...
+```
+
 ## Technical Implementation
 
 The source generator is implemented using:
