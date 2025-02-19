@@ -11,10 +11,6 @@ var endpointOption = new Option<string>(
     aliases: ["--endpoint", "-e"],
     description: "The Azure Search service endpoint URL");
 
-var keyOption = new Option<string>(
-    aliases: ["--key", "-k"],
-    description: "The Azure Search admin API key");
-
 var indexNameOption = new Option<string?>(
     aliases: ["--index-name", "-n"],
     description: "The name of the index (optional, defaults to name in JSON file)",
@@ -25,7 +21,6 @@ var diffCommand = new Command("diff", "Compare local index definition with Azure
 {
     fileOption,
     endpointOption,
-    keyOption,
     indexNameOption
 };
 
@@ -33,12 +28,11 @@ var updateCommand = new Command("update", "Create or update index in Azure Searc
 {
     fileOption,
     endpointOption,
-    keyOption,
     indexNameOption
 };
 
 // Set handlers
-diffCommand.SetHandler(async (file, endpoint, key, indexName) =>
+diffCommand.SetHandler(async (file, endpoint, indexName) =>
 {
     try
     {
@@ -63,7 +57,7 @@ diffCommand.SetHandler(async (file, endpoint, key, indexName) =>
             indexName = nameElement.GetString();
         }
 
-        var manager = new AzureSearchIndexManager(endpoint, key);
+        var manager = new AzureSearchIndexManager(endpoint);
         var result = await manager.CompareWithCurrentAsync(indexName!, json);
 
         if (!result.Exists)
@@ -89,9 +83,9 @@ diffCommand.SetHandler(async (file, endpoint, key, indexName) =>
         Console.Error.WriteLine($"Error: {ex.Message}");
         Environment.Exit(1);
     }
-}, fileOption, endpointOption, keyOption, indexNameOption);
+}, fileOption, endpointOption, indexNameOption);
 
-updateCommand.SetHandler(async (file, endpoint, key, indexName) =>
+updateCommand.SetHandler(async (file, endpoint, indexName) =>
 {
     try
     {
@@ -114,7 +108,7 @@ updateCommand.SetHandler(async (file, endpoint, key, indexName) =>
             }
         }
 
-        var manager = new AzureSearchIndexManager(endpoint, key);
+        var manager = new AzureSearchIndexManager(endpoint);
         await manager.UpsertIndexAsync(json);
         
         var indexNameFromJson = JsonSerializer.Deserialize<JsonElement>(json)
@@ -126,7 +120,7 @@ updateCommand.SetHandler(async (file, endpoint, key, indexName) =>
         Console.Error.WriteLine($"Error: {ex.Message}");
         Environment.Exit(1);
     }
-}, fileOption, endpointOption, keyOption, indexNameOption);
+}, fileOption, endpointOption, indexNameOption);
 
 var rootCommand = new RootCommand("Azure Search Index Management Tool")
 {

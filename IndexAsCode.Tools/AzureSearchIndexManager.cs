@@ -4,6 +4,7 @@ using Azure;
 using Azure.Core.Serialization;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
+using Azure.Identity;
 
 namespace IndexAsCode.Tools;
 
@@ -12,11 +13,11 @@ public class AzureSearchIndexManager
     private readonly SearchIndexClient _searchClient;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public AzureSearchIndexManager(string endpoint, string credential)
+    public AzureSearchIndexManager(string endpoint)
     {
         var uri = new Uri(endpoint);
-        var key = new AzureKeyCredential(credential);
-        _searchClient = new SearchIndexClient(uri, key);
+        var credential = new DefaultAzureCredential();
+        _searchClient = new SearchIndexClient(uri, credential);
         _jsonOptions = new JsonSerializerOptions 
         { 
             PropertyNameCaseInsensitive = true,

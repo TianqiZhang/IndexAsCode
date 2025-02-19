@@ -191,7 +191,7 @@ public class MockAzureSearchIndexManager : AzureSearchIndexManager
     private readonly string? _mockAzureJson;
 
     public MockAzureSearchIndexManager(string? mockAzureJson) 
-        : base("https://dummy.search.windows.net", "dummy-key")
+        : base("https://dummy.search.windows.net")
     {
         _mockAzureJson = mockAzureJson;
     }
