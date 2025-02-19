@@ -82,7 +82,7 @@ Console.WriteLine($"{HotelsFields.Address}/{HotelsFields.AddressCity}: {hotel.Ad
 ## Project Structure
 
 - `IndexAsCode.Generator/`: The source generator project targeting .NET Standard 2.0
-- `IndexAsCode.Sample/`: A sample project demonstrating usage (targeting .NET 9.0)
+- `IndexAsCode.Generator.Sample/`: A sample project demonstrating usage (targeting .NET 9.0)
   - `hotels.index.json`: Example index definition
   - `Program.cs`: Usage example
 
