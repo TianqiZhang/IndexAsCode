@@ -89,13 +89,17 @@ public class IndexGenerator : IIncrementalGenerator
 
     private void GenerateComplexType(StringBuilder sb, FieldDefinition complexField)
     {
-        sb.AppendLine($"    public class {complexField.Name}");
+        var className = CapitalizeFirstLetter(complexField.Name);
+        sb.AppendLine($"    public class {className}");
         sb.AppendLine("    {");
 
         foreach (var field in complexField.Fields!)
         {
             var csType = GetCSharpType(field);
-            sb.AppendLine($"        public {csType} {field.Name} {{ get; set; }}");
+            var propertyName = CapitalizeFirstLetter(field.Name);
+            // Use JsonPropertyName attribute to maintain original field name
+            sb.AppendLine($"        [System.Text.Json.Serialization.JsonPropertyName(\"{field.Name}\")]");
+            sb.AppendLine($"        public {csType} {propertyName} {{ get; set; }}");
 
             if (field.Type == "Edm.ComplexType" && field.Fields != null)
             {
@@ -108,14 +112,17 @@ public class IndexGenerator : IIncrementalGenerator
 
     private void GenerateMainClass(StringBuilder sb, IndexDefinition index)
     {
-        var className = char.ToUpperInvariant(index.Name[0]) + index.Name.Substring(1) + "Document";
+        var className = CapitalizeFirstLetter(index.Name) + "Document";
         sb.AppendLine($"    public class {className}");
         sb.AppendLine("    {");
 
         foreach (var field in index.Fields)
         {
             var csType = GetCSharpType(field);
-            sb.AppendLine($"        public {csType} {field.Name} {{ get; set; }}");
+            var propertyName = CapitalizeFirstLetter(field.Name);
+            // Use JsonPropertyName attribute to maintain original field name
+            sb.AppendLine($"        [System.Text.Json.Serialization.JsonPropertyName(\"{field.Name}\")]");
+            sb.AppendLine($"        public {csType} {propertyName} {{ get; set; }}");
         }
 
         sb.AppendLine("    }");
@@ -144,16 +151,16 @@ public class IndexGenerator : IIncrementalGenerator
 
     private void GenerateFieldConstant(StringBuilder sb, FieldDefinition field, string prefix, string propertyName)
     {
-        var fieldName = char.ToUpperInvariant(propertyName[0]) + propertyName.Substring(1);
+        var fieldConstantName = CapitalizeFirstLetter(propertyName);
         var fullPath = string.IsNullOrEmpty(prefix) ? field.Name : $"{prefix}/{field.Name}";
-        sb.AppendLine($"        public const string {fieldName} = \"{field.Name}\";");
+        sb.AppendLine($"        public const string {fieldConstantName} = \"{fullPath}\";");
 
         if (field.Type == "Edm.ComplexType" && field.Fields != null)
         {
             foreach (var subField in field.Fields)
             {
-                var subPropertyName = $"{propertyName}{char.ToUpperInvariant(subField.Name[0])}{subField.Name.Substring(1)}";
-                GenerateFieldConstant(sb, subField, field.Name, subPropertyName);
+                var subPropertyName = $"{propertyName}{CapitalizeFirstLetter(subField.Name)}";
+                GenerateFieldConstant(sb, subField, fullPath, subPropertyName);
             }
         }
     }
@@ -177,9 +184,16 @@ public class IndexGenerator : IIncrementalGenerator
         "Edm.Boolean" => "bool",
         "Edm.DateTimeOffset" => "DateTimeOffset",
         "Edm.GeographyPoint" => "string", // Simplified for demo
-        "Edm.ComplexType" => fieldName,
+        "Edm.ComplexType" => CapitalizeFirstLetter(fieldName),
         _ => "string"
     };
+
+    private string CapitalizeFirstLetter(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+        return char.ToUpperInvariant(input[0]) + input.Substring(1);
+    }
 }
 
 public class IndexDefinition

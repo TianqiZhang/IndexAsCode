@@ -7,7 +7,7 @@ Console.WriteLine("Hello, World!");
 // Create a new hotel using the generated model classes
 var hotel = new HotelsDocument
 {
-    HotelId = "123",
+    Id = "123",
     HotelName = "Seaside Resort",
     Description = "A beautiful beachfront resort",
     Tags = new List<string> { "beach", "luxury", "family-friendly", "spa" },
@@ -21,6 +21,6 @@ var hotel = new HotelsDocument
 
 // Demonstrate using the generated field constants
 Console.WriteLine($"Accessing hotel using field constants:");
-Console.WriteLine($"{HotelsFields.HotelId}: {hotel.HotelId}");
+Console.WriteLine($"{HotelsFields.Id}: {hotel.Id}");
 Console.WriteLine($"{HotelsFields.Address}/{HotelsFields.AddressStreetAddress}: {hotel.Address.StreetAddress}");
 Console.WriteLine($"{HotelsFields.Tags}: {string.Join(", ", hotel.Tags)}");
