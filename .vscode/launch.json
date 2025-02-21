@@ -1,0 +1,44 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "diff hotels",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/IndexAsCode.Tools/bin/Debug/net9.0/IndexAsCode.Tools.exe",
+            "args": [
+                "diff",
+                "--index-file",
+                "${workspaceFolder}/IndexAsCode.Generator.Sample/hotels.index.json",
+                "--endpoint",
+                "https://yours.search.windows.net",
+                "--index-name",
+                "hotels"
+            ],
+            "cwd": "${workspaceFolder}/IndexAsCode.Tools",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "update hotels",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/IndexAsCode.Tools/bin/Debug/net9.0/IndexAsCode.Tools.exe",
+            "args": [
+                "update",
+                "--index-file",
+                "${workspaceFolder}/IndexAsCode.Generator.Sample/hotels.index.json",
+                "--endpoint",
+                "https://yours.search.windows.net",
+                "--index-name",
+                "hotels"
+            ],
+            "cwd": "${workspaceFolder}/IndexAsCode.Tools",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}
