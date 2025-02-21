@@ -1,15 +1,21 @@
-# Index as Code - Azure AI Search Source Generator
+# Index as Code for Azure AI Search
 
-A C# Source Generator that eliminates redundancy between Azure AI Search index definitions, data models, and query field references. This project demonstrates how to use .NET source generators to automatically generate strongly-typed C# models and field constants from Azure AI Search index definitions.
+A complete solution for managing Azure AI Search indexes as code, enabling single-source-of-truth management of search indexes across your development and deployment pipeline.
 
 ## Overview
 
-When working with Azure AI Search, developers often need to maintain three separate but related pieces of code:
-1. The index definition (JSON)
-2. The corresponding C# model classes
-3. Field name constants for querying
+This project implements the "Index as Code" pattern for Azure AI Search, where a single JSON definition serves as the source of truth for:
+1. Search index schema in Azure AI Search
+2. C# model classes for your application
+3. Field name constants for building queries
+4. Deployment automation for CI/CD pipelines
 
-This source generator automatically generates #2 and #3 from #1, ensuring they stay in sync and reducing maintenance overhead.
+By keeping your index definition in code and using this toolset, you can:
+- Version control your search index changes
+- Generate consistent model classes automatically
+- Avoid typos in field references
+- Compare and sync index changes during deployment
+- Maintain multiple environments (dev/staging/prod) consistently
 
 ## Quick Example
 
