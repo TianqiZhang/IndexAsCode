@@ -119,6 +119,18 @@ public class AzureSearchIndexManager
             {
                 differences.Add($"Added {fullPath}: {localValue}");
             }
+            else if (localValue == null && azureValue != null)
+            {
+                differences.Add($"Changed {fullPath}:");
+                differences.Add($"  From: {azureValue}");
+                differences.Add($"  To:   null");
+            }
+            else if (localValue != null && azureValue == null)
+            {
+                differences.Add($"Changed {fullPath}:");
+                differences.Add($"  From: null");
+                differences.Add($"  To:   {localValue}");
+            }
             else if (localValue != null && azureValue != null)
             {
                 CompareNodes(localValue, azureValue, fullPath, differences);
